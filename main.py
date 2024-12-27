@@ -6,28 +6,29 @@ from PIL import Image
 import correctImage as ci
 import numpy as np
 
+def main(cropped_image):
+    tableArray = []
+    imgArray = []
 
-tableArray = []
-imgArray = []
+    image = Image.open("image/FullDoc.jpg")
+    #imgArray = ['image/first_column.png',"image/second_column_2.png"]
+    #imgArray.append(path)
+    pieces = ci.hough_lines(cropped_image);
+    for i in range(1):
+        path_to_image = "image/first_column_1.png"#imgArray[i]
+        table_extractor = te.TableExtractor(path_to_image)
+        perspective_corrected_image = table_extractor.execute()
+        #cv2.imshow("perspective_corrected_image", perspective_corrected_image)
 
-image = Image.open("image/FullDoc.jpg")
-#imgArray = ['image/first_column.png',"image/second_column_2.png"]
-#imgArray.append(path)
-for i in range(1):
-    path_to_image = "image/first_column.png"#imgArray[i]
-    table_extractor = te.TableExtractor(path_to_image)
-    perspective_corrected_image = table_extractor.execute()
-    cv2.imshow("perspective_corrected_image", perspective_corrected_image)
+        lines_remover = tlr.TableLinesRemover(perspective_corrected_image)
+        image_without_lines = lines_remover.execute()
+        #cv2.imshow("image_without_lines", image_without_lines)
 
-    lines_remover = tlr.TableLinesRemover(perspective_corrected_image)
-    image_without_lines = lines_remover.execute()
-    cv2.imshow("image_without_lines", image_without_lines)
-
-    ocr_tool = ottt.OcrToTableTool(image_without_lines, perspective_corrected_image)
-    tableArray.append(ocr_tool.execute())
+        ocr_tool = ottt.OcrToTableTool(image_without_lines, perspective_corrected_image)
+        tableArray.append(ocr_tool.execute())
 
 
-ottt.OcrToTableTool.generate_csv_file(tableArray)
+    ottt.OcrToTableTool.generate_csv_file(tableArray)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

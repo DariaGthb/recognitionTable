@@ -12,6 +12,7 @@ import json
 from sys import platform
 import numpy as np
 
+import main
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -62,6 +63,10 @@ class Quote(Resource):
             result.append({'error': str(sys.exc_info()[1])})
         os.remove(fname)
 
+        try:
+            main.main(cropped_image)
+        except:
+            result.append({'error'})
         # Теперь нужно распределить результат
         return json.dumps(result, ensure_ascii=False), 202
 

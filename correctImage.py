@@ -3,13 +3,15 @@ import numpy as np
 
 
 def cropImg(image, pointsArray):
-
+    reserve = 10
     sorted_points = sort_points_clockwise(pointsArray)
-    x1, y1 = sorted_points[0][0], sorted_points[0][1]
-    x2, y2 = sorted_points[2][0], sorted_points[2][1]
-    cropped = image[y1:y2, x1:x2]
+    x1, y1 = sorted_points[0][0] - reserve, sorted_points[0][1] - reserve
+    x2, y2 = sorted_points[2][0] + reserve, sorted_points[2][1] + reserve
+
+    cropped = image[max(y1,0):min(y2,image.shape[0]), max(x1,0):min(x2,image.shape[1])]
 
     return cropped
+
 
 def hough_lines(image):
     # Блок определения вертикальных линий
@@ -20,42 +22,51 @@ def hough_lines(image):
     lines = cv2.HoughLinesP(image=edges, rho=1, theta=np.pi / 180, threshold=100, lines=np.array([]),
                             minLineLength=minLineLength, maxLineGap=80)
 
-    vertical_lines = []
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        # Проверяем, является ли линия вертикальной
-        if abs(x1 - x2) < 10:  # Разница между x1 и x2 меньше порога (10 пикселей)
-            vertical_lines.append(line[0])
-
-    vertical_lines = sorted(vertical_lines)
-
-    # Получаем высоту и ширину исходного изображения
-    height, width = image.shape[:2]
-
-    # Список для хранения разрезанных частей
     pieces = []
+    if lines is not None:
+        # Сортируем координаты по X (если вертикальные линии)
+        lines = sorted(lines, key=lambda x: x[0][0])
 
-    # Начальная координата для разрезания
-    prev_x = 0
+        # Получаем высоту и ширину изображения
+        height, width = image.shape[:2]
 
-    # Проходим по каждой вертикальной линии
-    for x in vertical_lines:
-        # Вырезаем часть изображения от prev_x до x
-        piece = image[:, prev_x:x]
-        pieces.append(piece)
-        prev_x = x
+        # Список для хранения разрезанных частей
+        pieces = []
 
-    # Вырезаем последнюю часть до конца изображения, если есть пространство
-    if prev_x < width:
-        piece = image[:, prev_x:]
-        pieces.append(piece)
+        # Начальная координата для разрезания
+        prev_x = 0
 
-    for i, piece in enumerate(pieces):
-        cv2.imwrite(f'piece_{i}.jpg', piece)
+        # Разрезаем по вертикальным линиям
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            # Только вертикальные линии
+            if abs(x1 - x2) < 10:  # Разница между x1 и x2 меньше порога (10 пикселей)
+                cv2.line(gray, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            else:
+                continue
+            # Вырезаем часть изображения от prev_x до текущей линии
+            piece = image[:, prev_x:x1]
+
+            if piece.shape[1] > 100:
+                pieces.append(piece)
+                prev_x = x1
+
+        cv2.imwrite('image/temp/houghlines5.jpg', gray)
+
+        # Вырезаем последнюю часть, если есть
+        if prev_x < width and image[:, prev_x:].shape[1] > 100:
+            piece = image[:, prev_x:]
+            pieces.append(piece)
+
+        for i, piece in enumerate(pieces):
+            try:
+                path = "./process_images/pieces/" + f'piece_{i}.jpg'
+                cv2.imwrite(path, piece)
+            except:
+                print("Error")
 
     return pieces
 
-    # Конец блока определения вертикальных линий
 
 def sort_points_clockwise(points):
 

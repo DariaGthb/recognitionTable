@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import subprocess
-#import easyocr
+import easyocr
 #import torch
 import pytesseract
+import time
 
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
@@ -119,9 +120,10 @@ class OcrToTableTool:
 
     def get_result_from_tersseract(self, image_path):
 
-        use_easy_ocr = True
+        start_time = time.time()
+        use_easy_ocr = False
         image = cv2.imread(image_path)
-        '''if use_easy_ocr:
+        if use_easy_ocr:
             reader = easyocr.Reader(['ru', 'en'])
             result = reader.readtext(image)
 
@@ -130,8 +132,11 @@ class OcrToTableTool:
             else:
                 text_list = [result[i][1] for i in range(len(result))]
                 text = "".join(text_list)
-        else:'''
-        text = pytesseract.image_to_string(image, lang='eng+rus', config='--psm 6')
+        else:
+            text = pytesseract.image_to_string(image, lang='eng+rus', config='--psm 6')
+
+        print(text)
+        print("--- %s seconds ---" % (time.time() - start_time))
 
         return text
 

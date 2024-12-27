@@ -11,9 +11,8 @@ tableArray = []
 imgArray = []
 
 image = Image.open("image/FullDoc.jpg")
-path = ci.cropImg(image, [14, 300, 10, 70])
 #imgArray = ['image/first_column.png',"image/second_column_2.png"]
-imgArray.append(path)
+#imgArray.append(path)
 for i in range(1):
     path_to_image = "image/first_column.png"#imgArray[i]
     table_extractor = te.TableExtractor(path_to_image)

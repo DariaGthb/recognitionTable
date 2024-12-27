@@ -54,8 +54,8 @@ class Quote(Resource):
             print('list ' + str(1) + ' ' + fname + ' ' + str(datetime.datetime.now()))
             image = cv2.imread(fname)
             coordinates = np.array(file["coordinates"])
-            correctImage.cropImg(image, coordinates)
-            correctImage.apply_perspective_transform(image, coordinates)
+            cropped_image = correctImage.cropImg(image, coordinates)
+
 
             result.append({'result': "success"})
         except:

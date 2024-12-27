@@ -26,23 +26,6 @@ for i in range(1):
     ocr_tool = ottt.OcrToTableTool(image_without_lines, perspective_corrected_image)
     tableArray.append(ocr_tool.execute())
 
-    # Блок определения вертикальных линий
-    gray = cv2.imread(path_to_image)
-    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-
-    minLineLength = 100
-    lines = cv2.HoughLinesP(image=edges, rho=1, theta=np.pi / 180, threshold=100, lines=np.array([]),
-                            minLineLength=minLineLength, maxLineGap=80)
-
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        # Проверяем, является ли линия вертикальной
-        if abs(x1 - x2) < 10:  # Разница между x1 и x2 меньше порога (10 пикселей)
-            cv2.line(gray, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    cv2.imwrite('image/temp/houghlines5.jpg', gray)
-
-    # Конец блока определения вертикальных линий
 
 ottt.OcrToTableTool.generate_csv_file(tableArray)
 

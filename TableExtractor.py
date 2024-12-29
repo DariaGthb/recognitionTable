@@ -3,11 +3,11 @@ import numpy as np
 
 class TableExtractor:
 
-    def __init__(self, image_path):
-        self.image_path = image_path
+    def __init__(self, image):
+        self.image = image
 
     def execute(self):
-        self.read_image()
+        #self.read_image()
         self.store_process_image("0_original.jpg", self.image)
         self.convert_image_to_grayscale()
         self.store_process_image("1_grayscaled.jpg", self.grayscale_image)

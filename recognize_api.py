@@ -64,11 +64,11 @@ class Quote(Resource):
         os.remove(fname)
 
         try:
-            main.main(cropped_image)
+            result = main.main(cropped_image)
         except:
             result.append({'error'})
         # Теперь нужно распределить результат
-        return json.dumps(result, ensure_ascii=False), 202
+        return result, 202
 
     def put(self, id=0):
         return f"must use POST method", 201

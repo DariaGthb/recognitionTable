@@ -8,7 +8,7 @@ def cropImg(image, pointsArray):
     x1, y1 = sorted_points[0][0] - reserve, sorted_points[0][1] - reserve
     x2, y2 = sorted_points[2][0] + reserve, sorted_points[2][1] + reserve
 
-    cropped = image[max(y1,0):min(y2,image.shape[0]), max(x1,0):min(x2,image.shape[1])]
+    cropped = image[max(y1, 0):min(y2, image.shape[0]), max(x1, 0):min(x2, image.shape[1])]
 
     return cropped
 

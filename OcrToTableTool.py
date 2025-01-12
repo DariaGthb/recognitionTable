@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-import subprocess
-#import torch
 import pytesseract
 import time
 
@@ -26,7 +24,7 @@ class OcrToTableTool:
         self.sort_all_rows_by_x_coordinate()
         self.crop_each_bounding_box_and_ocr()
         return self.table
-        #self.generate_csv_file()
+
 
     def threshold_image(self):
         return cv2.threshold(self.grey_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -120,7 +118,6 @@ class OcrToTableTool:
     def get_result_from_tersseract(self, image_path):
 
         start_time = time.time()
-        use_easy_ocr = False
         image = cv2.imread(image_path)
         text = pytesseract.image_to_string(image, lang='eng+rus', config='--psm 6')
 
@@ -128,12 +125,6 @@ class OcrToTableTool:
         print("--- %s seconds ---" % (time.time() - start_time))
 
         return text
-
-    def generate_csv_file(tableArray):
-        with open("output.csv", "w") as f:
-            for array in tableArray:
-                for row in array:
-                    f.write(",".join(row) + "\n")
 
     def store_process_image(self, file_name, image):
         path = "./process_images/ocr_table_tool/" + file_name

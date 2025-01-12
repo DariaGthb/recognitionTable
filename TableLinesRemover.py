@@ -3,8 +3,9 @@ import numpy as np
 
 class TableLinesRemover:
 
-    def __init__(self, image):
+    def __init__(self, image, iterations):
         self.image = image
+        self.iterations = iterations
 
     def execute(self):
         self.grayscale_image()
@@ -64,8 +65,8 @@ class TableLinesRemover:
 
     def remove_noise_with_erode_and_dilate(self):
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-        #self.image_without_lines_noise_removed = cv2.erode(self.image_without_lines, kernel, iterations=1)
-        self.image_without_lines_noise_removed = cv2.dilate(self.image_without_lines, kernel, iterations=10)
+        self.image_without_lines_noise_removed = cv2.erode(self.image_without_lines, kernel, iterations=1)
+        self.image_without_lines_noise_removed = cv2.dilate(self.image_without_lines, kernel, iterations=self.iterations)
 
     def store_process_image(self, file_name, image):
         path = "./process_images/table_lines_remover/" + file_name

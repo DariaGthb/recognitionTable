@@ -50,25 +50,22 @@ class Quote(Resource):
             os.remove(fname)
             result.append({'error': r"error save file"})
 
+        operation_complete = False
         try:
             FileResult = []
             print('list ' + str(1) + ' ' + fname + ' ' + str(datetime.datetime.now()))
             image = cv2.imread(fname)
             coordinates = np.array(file["coordinates"])
-            cropped_image = correctImage.cropImg(image, coordinates)
-
-
-            result.append({'result': "success"})
+            result = main.main(image, coordinates)
+            operation_complete = True
         except:
             result.append({'error': str(sys.exc_info()[1])})
         os.remove(fname)
 
-        try:
-            result = main.main(cropped_image)
-        except:
-            result.append({'error'})
-        # Теперь нужно распределить результат
-        return result, 202
+        if operation_complete:
+            return result, 202
+        else:
+            return result, 404
 
     def put(self, id=0):
         return f"must use POST method", 201
@@ -85,4 +82,4 @@ def hello():
 api.add_resource(Quote, "/recognize", "/recognize/", "/recognize/<int:id>")
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000', debug=False)
-    #app.run(debug=True)
+    # app.run(debug=True)
